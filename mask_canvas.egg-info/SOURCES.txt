@@ -1,0 +1,11 @@
+setup.py
+maskCanvas/__init__.py
+maskCanvas/canvas.py
+maskCanvas/elements.py
+maskCanvas/mask.py
+maskCanvas/util.py
+mask_canvas.egg-info/PKG-INFO
+mask_canvas.egg-info/SOURCES.txt
+mask_canvas.egg-info/dependency_links.txt
+mask_canvas.egg-info/requires.txt
+mask_canvas.egg-info/top_level.txt
