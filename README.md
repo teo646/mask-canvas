@@ -1,21 +1,11 @@
 # mask-canvas
 
 I am going to make a canvas module to draw some lines, arcs, circles where you can register masks.
-
-## Getting Started
-
-1. create virtual environment(venv)
-2. cd maskCanvas
-3. pip install -e .
-4. python example/masking.py for quick start
+![Screenshot from 2024-01-28 17-07-56](https://github.com/teo646/mask-canvas/assets/61399931/0e95f54d-a116-4396-b1cd-54a930f528db)
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+cv2, numpy but will be install automatically via pip install -e.
 
 ### Installing
 
@@ -35,6 +25,6 @@ python example/masking.py
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 

@@ -37,10 +37,6 @@ class canvas:
         canvas = np.full((y_max*magnification,x_max*magnification), 255, dtype='uint8')
 
         for line in self.line_segs:
-            print(line.points[0].x)
-            print(line.points[0].y)
-            print(line.points[1].x)
-            print(line.points[1].y)
             canvas = line.draw(canvas, magnification)
 
         return np.flip(canvas, axis=0)
