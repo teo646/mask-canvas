@@ -4,7 +4,10 @@ I am going to make a module to draw some lines, arcs, circles where you can regi
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+1. create virtual environment(venv)
+2. cd maskCanvas
+3. pip install -e .
+4. python example/masking.py for quick start
 
 ### Prerequisites
 

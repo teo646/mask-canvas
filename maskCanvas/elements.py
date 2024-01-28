@@ -1,8 +1,8 @@
 import numpy as np
 import sys
-
+import cv2
 DEFAULT_LINE_COLOR = (0,0,0)
-DEFAULT_LINE_THICKNESS = 0.3
+DEFAULT_LINE_THICKNESS = 0.1
 
 
 class point:
@@ -10,8 +10,8 @@ class point:
         self.x = x
         self.y = y
 
-    def asNumpy(self):
-        return np.array([self.x, self.y])
+    def asNumpy(self, magnification):
+        return np.array([self.x, self.y])*magnification
 
 class line_seg:
     def __init__(self, points, color = DEFAULT_LINE_COLOR, thickness = DEFAULT_LINE_THICKNESS):
@@ -24,9 +24,8 @@ class line_seg:
             points = tmp
 
         if(points[0].x > points[1].x):
-            self.points = points.reverse()
-        else:
-            self.points = points
+            points.reverse()
+        self.points = points
         self.color= color
         self.thickness = thickness
 
@@ -49,7 +48,8 @@ class line_seg:
         return sys.maxint
 
     def draw(self, image, magnification):
-        return cv2.line(image, self.points[0].asNumpy()*magnification, self.points[1].asNumpy()*magnification, self.color, int(self.thickness*maginification))
+        print(self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'))
+        return cv2.line(image, self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
 
     def getLineIntersection(self, line):
         # Line AB represented as a1x + b1y = c1

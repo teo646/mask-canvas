@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
-from bisect import bisect_left
 from .elements import line_seg
+from .mask import mask
+import math
 
 class canvas:
     def __init__(self):
@@ -20,24 +21,26 @@ class canvas:
                 masked_lines += mask.maskLineSeg(line)
             line_segs_to_mask = masked_lines
 
-        self.line_segs += masked_lines
+        self.line_segs += line_segs_to_mask
 
         
     #you can either put mask or path as a parameter
     def registerMask(self, mask_instance):
         if(not isinstance(mask_instance, mask)):
-            mask_instance = mask(mask_instnace)
+            mask_instance = mask(mask_instance)
         self.masks.append(mask_instance)
 
     def draw(self, magnification):
-        x_min = min(self.line_segs, key = lambda c: c.getXMin())
-        y_min = min(self.line_segs, key = lambda c: c.getYMin())
-        x_max = max(self.line_segs, key = lambda c: c.getXMax())
-        y_max = max(self.line_segs, key = lambda c: c.getYMax())
+        x_max = math.ceil(max(self.line_segs, key = lambda c: c.getXMax()).getXMax()*1.2)
+        y_max = math.ceil(max(self.line_segs, key = lambda c: c.getYMax()).getYMax()*1.2)
 
-        canvas = np.full(((y_max-y_min)*magnification,(x_max-x_min)*magnification), 255)
+        canvas = np.full((y_max*magnification,x_max*magnification), 255, dtype='uint8')
 
         for line in self.line_segs:
+            print(line.points[0].x)
+            print(line.points[0].y)
+            print(line.points[1].x)
+            print(line.points[1].y)
             canvas = line.draw(canvas, magnification)
 
-        return canvas
+        return np.flip(canvas, axis=0)
