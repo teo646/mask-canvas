@@ -39,8 +39,8 @@ class mask:
             point1_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[0].x)
             point2_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[1].x)
         else:
-            point1_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[0].y)
-            point2_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[1].y)
+            point1_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.y), line.points[0].y)
+            point2_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.y), line.points[1].y)
 
         #if there is no intersections
         if(point1_index == point2_index):

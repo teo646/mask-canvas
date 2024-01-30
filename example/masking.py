@@ -11,7 +11,7 @@ def main():
     c.registerLineSeg([[4,4],[24,26]])
     c.registerLineSeg([[3,15],[24,26]])
     c.registerLineSeg([[4,16],[14,21]])
-    c.registerLineSeg([[7,1],[7,26]])
+    c.registerLineSeg([[7,1],[7,13]])
     showImage(c.draw(10))
 
 if __name__ == "__main__":
