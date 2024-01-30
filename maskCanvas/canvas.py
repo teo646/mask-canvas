@@ -34,7 +34,7 @@ class canvas:
         x_max = math.ceil(max(self.line_segs, key = lambda c: c.getXMax()).getXMax()*1.2)
         y_max = math.ceil(max(self.line_segs, key = lambda c: c.getYMax()).getYMax()*1.2)
 
-        canvas = np.full((y_max*magnification,x_max*magnification), 255, dtype='uint8')
+        canvas = np.full((y_max*magnification,x_max*magnification,3), 255, dtype='uint8')
 
         for line in self.line_segs:
             canvas = line.draw(canvas, magnification)

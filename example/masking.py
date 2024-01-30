@@ -1,17 +1,22 @@
-from maskCanvas import canvas, showImage
-
+from maskCanvas import canvas, showImage, line_seg
+colors = [ (0, 0, 255),  (0, 255, 0),  (255, 0, 0),  (0, 255, 255),  (255, 0, 255)]
 def main():
     c= canvas()
-    mask_path = [[4,4],[7,10],[10,2],[15,17],[20,8],[20,26],[6,17]]
-    for i in range(len(mask_path)):
-        c.registerLineSeg([mask_path[i-1],mask_path[i]])
-    c.registerMask(mask_path)
+    mask1_path = [[4,4],[7,10],[10,2],[15,17],[20,8],[20,26],[6,17]]
+    mask2_path = [[22,22],[25,22],[25,28],[22,28]]
+    for i in range(len(mask1_path)):
+        c.registerLineSeg([mask1_path[i-1],mask1_path[i]])
+    c.registerMask(mask1_path)
 
-    c.registerLineSeg([[2,9],[38,7]])
-    c.registerLineSeg([[4,4],[24,26]])
-    c.registerLineSeg([[3,15],[24,26]])
-    c.registerLineSeg([[4,16],[14,21]])
-    c.registerLineSeg([[7,1],[7,13]])
+    for i in range(len(mask2_path)):
+        c.registerLineSeg([mask2_path[i-1],mask2_path[i]])
+    c.registerMask(mask2_path)
+
+
+    c.registerLineSeg(line_seg([[4,4],[24,26]],color = colors[1]))
+    c.registerLineSeg(line_seg([[30,15],[32,26]],color = colors[3]))
+    c.registerLineSeg(line_seg([[3,15],[24,26]],color = colors[2]))
+    c.registerLineSeg(line_seg([[7,1],[7,13]],color = colors[4]))
     showImage(c.draw(10))
 
 if __name__ == "__main__":
