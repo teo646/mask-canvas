@@ -23,6 +23,9 @@ class KeyWrapper:
         return len(self.it)
 
 def getYIntercept(slope, point):
-    return point.y - slope*point.x
+    if(slope):
+        return point.y - slope*point.x
+    else:
+        return point.x
 
 

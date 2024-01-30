@@ -25,6 +25,9 @@ class line_seg:
 
         if(points[0].x > points[1].x):
             points.reverse()
+        elif(points[0].x == points[1].x and points[0].y > points[1].y):
+            points.reverse()
+
         self.points = points
         self.color= color
         self.thickness = thickness
@@ -45,7 +48,7 @@ class line_seg:
     def slope(self):
         if(self.points[1].x - self.points[0].x != 0):
             return (float)(self.points[1].y-self.points[0].y)/(self.points[1].x-self.points[0].x)
-        return sys.maxint
+        return None
 
     def draw(self, image, magnification):
         return cv2.line(image, self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
