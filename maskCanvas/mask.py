@@ -32,13 +32,14 @@ class mask:
                 intersections.append(self.path[index-1])
             vertex1_sign = vertex2_sign
 
-        intersections = sorted(intersections, key= lambda point: point.x)
 
         #get line segments from intersections
         if(line.slope()):
+            intersections = sorted(intersections, key= lambda point: point.x)
             point1_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[0].x)
             point2_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[1].x)
         else:
+            intersections = sorted(intersections, key= lambda point: point.y)
             point1_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.y), line.points[0].y)
             point2_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.y), line.points[1].y)
 
@@ -60,6 +61,5 @@ class mask:
             point2_index -= 1
         for index in range(point1_index, point2_index, 2):
             masked_lines.append(line_seg([intersections[index], intersections[index+1]], color = line.color, thickness = line.thickness))
-
         return masked_lines
 

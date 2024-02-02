@@ -22,8 +22,11 @@ class canvas:
             line_segs_to_mask = masked_lines
 
         self.line_segs += line_segs_to_mask
-
         
+    def registerLineSegs(self, lines):
+        for line in lines:
+            self.registerLineSeg(line)
+
     #you can either put mask or path as a parameter
     def registerMask(self, mask_instance):
         if(not isinstance(mask_instance, mask)):
@@ -39,4 +42,4 @@ class canvas:
         for line in self.line_segs:
             canvas = line.draw(canvas, magnification)
 
-        return np.flip(canvas, axis=0)
+        return canvas
