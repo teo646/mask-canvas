@@ -61,5 +61,6 @@ class mask:
             point2_index -= 1
         for index in range(point1_index, point2_index, 2):
             masked_lines.append(line_seg([intersections[index], intersections[index+1]], color = line.color, thickness = line.thickness))
+
         return masked_lines
 

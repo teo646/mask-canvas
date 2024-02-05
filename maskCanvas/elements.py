@@ -13,19 +13,23 @@ class point:
     def asNumpy(self, magnification):
         return np.array([self.x, self.y])*magnification
 
+    def print(self):
+        print(self.x, self.y)
 class line_seg:
     def __init__(self, points, color = DEFAULT_LINE_COLOR, thickness = DEFAULT_LINE_THICKNESS):
         if(len(points) != 2 or points[0] == points[1]):
             raise Exception("line has to have two different points")
+
         if(not isinstance(points[0], point)):
             tmp = []
             for p in points:
                 tmp.append(point(p[0], p[1]))
             points = tmp
 
-        if(points[0].x > points[1].x):
+        self.vertical = True if abs(points[1].x - points[0].x) < 0.001 else False
+        if(self.vertical and points[0].y > points[1].y):
             points.reverse()
-        elif(points[0].x == points[1].x and points[0].y > points[1].y):
+        elif(points[0].x > points[1].x):
             points.reverse()
 
         self.points = points
@@ -46,7 +50,7 @@ class line_seg:
 
 
     def slope(self):
-        if(self.points[1].x - self.points[0].x != 0):
+        if(not self.vertical):
             return (float)(self.points[1].y-self.points[0].y)/(self.points[1].x-self.points[0].x)
         return None
 
@@ -80,4 +84,7 @@ class line_seg:
             y = 0
 
         return point(x, y)
-
+    
+    def print(self):
+        self.points[0].print()
+        self.points[1].print()
