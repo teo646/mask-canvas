@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+from math import pi
 import cv2
 DEFAULT_LINE_COLOR = (0,0,0)
 DEFAULT_LINE_THICKNESS = 0.3
@@ -88,3 +89,26 @@ class line_seg:
     def print(self):
         self.points[0].print()
         self.points[1].print()
+
+
+class circle:
+    unit_line_length = 0.5
+    def __init__(self, center, radius, start_angle, end_angle):
+        self.lines = []
+
+        if(start_angle > end_angle):
+            end_angle += 2*pi
+        unit_angle = self.unit_line_length/radius
+
+        p1 = point(center.x+radius*cos(start_angle), center.y-radius*sin(start_angle))
+        for angle in range(start_angle+unit_angle, end_angle, unit_angle):
+            p2 = point(center.x+radius*cos(angle), center.y-radius*sin(angle))
+            lines.append(lineSeg([p1,p2]))
+            p1=p2
+        
+    def draw(self,canvas, magnification):
+        for line in self.lines:
+            line.draw(canvas, magnification)
+
+
+
