@@ -91,7 +91,7 @@ class line_seg:
         self.points[1].print()
 
 
-class circle:
+class arc:
     unit_line_length = 0.5
     def __init__(self, center, radius, start_angle=0, end_angle=2*pi):
         self.lines = []
