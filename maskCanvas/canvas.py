@@ -27,6 +27,9 @@ class canvas:
         for line in lines:
             self.registerLineSeg(line)
 
+    def registerCircle(self, circle):
+        self.registerLineSegs(circle.lines)
+
     #you can either put mask or path as a parameter
     def registerMask(self, mask_instance):
         if(not isinstance(mask_instance, mask)):
