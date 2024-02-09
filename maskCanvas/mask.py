@@ -17,24 +17,26 @@ class mask:
 
     #mask line segment
     def maskLineSeg(self, line):
-        y_intercept = getYIntercept(line.slope(), line.points[0])
+        intercept = line.getIntercept(line.points[0])
         intersections = []
 
         #get intersections between mask and line(not line segment)
+        vertex1_sign = line.getIntercept(self.path[-1]) - intercept
         for index in range(len(self.path)):
-            vertex1_sign = getYIntercept(line.slope(), self.path[index-1]) - y_intercept
-            vertex2_sign = getYIntercept(line.slope(), self.path[index]) - y_intercept
+            vertex2_sign = line.getIntercept(self.path[index]) - intercept
             #basic intersecting case
             if(vertex1_sign*vertex2_sign < 0):
-                intersections.append(line.getLineIntersection(line_seg([self.path[index-1], self.path[index]])))
+                intersection = line.getLineIntersection(line_seg([self.path[index-1], self.path[index]]))
+                if(intersection):
+                    intersections.append(intersection)
             #case where a vertex lies on the line
-            elif(vertex1_sign == 0 and (getYIntercept(line.slope(), self.path[index-2])-y_intercept)*vertex2_sign < 0):
+            elif(vertex1_sign == 0 and (line.getIntercept(self.path[index-2])-intercept)*vertex2_sign < 0):
                 intersections.append(self.path[index-1])
             vertex1_sign = vertex2_sign
 
 
         #get line segments from intersections
-        if(line.slope()):
+        if(line.useDX):
             intersections = sorted(intersections, key= lambda point: point.x)
             point1_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[0].x)
             point2_index = bisect_left(KeyWrapper(intersections, key=lambda c: c.x), line.points[1].x)

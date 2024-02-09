@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-from math import pi, cos, sin
+from math import pi, cos, sin, tan
 import cv2
 DEFAULT_LINE_COLOR = (0,0,0)
 DEFAULT_LINE_THICKNESS = 0.3
@@ -16,6 +16,9 @@ class point:
 
     def print(self):
         print(self.x, self.y)
+
+
+
 class line_seg:
     def __init__(self, points, color = DEFAULT_LINE_COLOR, thickness = DEFAULT_LINE_THICKNESS):
         if(len(points) != 2 or points[0] == points[1]):
@@ -27,21 +30,24 @@ class line_seg:
                 tmp.append(point(p[0], p[1]))
             points = tmp
 
-        self.vertical = True if abs(points[1].x - points[0].x) < 0.001 else False
-        if(self.vertical and points[0].y > points[1].y):
+        self.useDX = True if abs(points[1].x - points[0].x) > abs(points[1].y - points[0].y) else False
+        if(self.useDX and points[0].x > points[1].x):
             points.reverse()
-        elif(points[0].x > points[1].x):
+        elif(points[0].y > points[1].y):
             points.reverse()
 
         self.points = points
         self.color= color
         self.thickness = thickness
-
+        if(self.useDX):
+            self.slope = (float)(self.points[1].y-self.points[0].y)/(self.points[1].x-self.points[0].x)
+        else:
+            self.slope =  (float)(self.points[1].x-self.points[0].x)/(self.points[1].y-self.points[0].y)
     def getXMax(self):
-        return self.points[1].x
+        return self.points[0].x if self.points[0].x > self.points[1].x else self.points[1].x
 
     def getXMin(self):
-        return self.points[0].x
+        return self.points[0].x if self.points[0].x < self.points[1].x else self.points[1].x
 
     def getYMax(self):
         return self.points[0].y if self.points[0].y > self.points[1].y else self.points[1].y
@@ -49,13 +55,8 @@ class line_seg:
     def getYMin(self):
         return self.points[0].y if self.points[0].y < self.points[1].y else self.points[1].y
 
-
-    def slope(self):
-        if(not self.vertical):
-            return (float)(self.points[1].y-self.points[0].y)/(self.points[1].x-self.points[0].x)
-        return None
-
     def draw(self, image, magnification):
+        print(self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'))
         return cv2.line(image, self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
 
     def getLineIntersection(self, line):
@@ -81,11 +82,16 @@ class line_seg:
             y = (a1*c2 - a2*c1)/determinant
         except ZeroDivisionError as e:
             print("you tried to get intersection of parallel lines")
-            x = 0
-            y = 0
+            return None
+        else:
+            return point(x,y)
+   
+    def getIntercept(self, point):
+        if(self.useDX):
+            return point.y - self.slope*point.x
+        else:
+            return point.x - self.slope*point.y
 
-        return point(x, y)
-    
     def print(self):
         self.points[0].print()
         self.points[1].print()
@@ -93,18 +99,27 @@ class line_seg:
 
 class arc:
     unit_line_length = 0.5
-    def __init__(self, center, radius, start_angle=0, end_angle=2*pi):
+    def __init__(self, center, radius, pitch=0, yaw=0, start_angle=0, end_angle=2*pi):
         self.lines = []
+        self.center = center
+        self.radius = radius
+        self.pitch = pitch
+        self.yaw = yaw
 
         if(start_angle > end_angle):
             end_angle += 2*pi
+
         unit_angle = self.unit_line_length/radius
 
-        p1 = point(center.x+radius*cos(start_angle), center.y-radius*sin(start_angle))
+        p1 = self.getPoint(start_angle)
         for angle in np.arange(start_angle+unit_angle, end_angle, unit_angle):
-            p2 = point(center.x+radius*cos(angle), center.y-radius*sin(angle))
+            p2 = self.getPoint(angle)
             self.lines.append(line_seg([p1,p2]))
             p1=p2
         
+    def getPoint(self,angle):
+        return point(self.center.x+self.radius*cos(angle)*sin(self.yaw), self.center.y-self.radius*sin(angle)/tan(self.pitch))
+
+
 
 
