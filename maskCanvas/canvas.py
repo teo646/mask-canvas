@@ -14,14 +14,15 @@ class canvas:
     def registerLineSeg(self, line):
         if(not isinstance(line, line_seg)):
             line = line_seg(line)
-        line_segs_to_mask  = [line] 
-        for mask in self.masks:
-            masked_lines = []
-            for line in line_segs_to_mask:
-                masked_lines += mask.maskLineSeg(line)
-            line_segs_to_mask = masked_lines
 
-        self.line_segs += line_segs_to_mask
+        if(line.isValid()):
+            line_segs_to_mask  = [line] 
+            for mask in self.masks:
+                masked_lines = []
+                for line in line_segs_to_mask:
+                    masked_lines += mask.maskLineSeg(line)
+                line_segs_to_mask = masked_lines
+            self.line_segs += line_segs_to_mask
         
     def registerLineSegs(self, lines):
         for line in lines:

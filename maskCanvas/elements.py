@@ -21,28 +21,34 @@ class point:
 
 class line_seg:
     def __init__(self, points, color = DEFAULT_LINE_COLOR, thickness = DEFAULT_LINE_THICKNESS):
-        if(len(points) != 2 or points[0] == points[1]):
-            raise Exception("line has to have two different points")
-
-        if(not isinstance(points[0], point)):
-            tmp = []
-            for p in points:
-                tmp.append(point(p[0], p[1]))
-            points = tmp
-
-        self.useDX = True if abs(points[1].x - points[0].x) > abs(points[1].y - points[0].y) else False
-        if(self.useDX and points[0].x > points[1].x):
-            points.reverse()
-        elif(points[0].y > points[1].y):
-            points.reverse()
 
         self.points = points
         self.color= color
         self.thickness = thickness
-        if(self.useDX):
-            self.slope = (float)(self.points[1].y-self.points[0].y)/(self.points[1].x-self.points[0].x)
-        else:
-            self.slope =  (float)(self.points[1].x-self.points[0].x)/(self.points[1].y-self.points[0].y)
+        if(not isinstance(self.points[0], point)):
+            tmp = []
+            for p in self.points:
+                tmp.append(point(p[0], p[1]))
+            self.points = tmp
+        
+
+        if(self.isValid()):
+            self.useDX = True if abs(self.points[1].x - self.points[0].x) > abs(self.points[1].y - self.points[0].y) else False
+            if(self.useDX and self.points[0].x > self.points[1].x):
+                self.points.reverse()
+            elif(self.points[0].y > self.points[1].y):
+                self.points.reverse()
+
+            if(self.useDX):
+                self.slope = (float)(self.points[1].y-self.points[0].y)/(self.points[1].x-self.points[0].x)
+            else:
+                self.slope =  (float)(self.points[1].x-self.points[0].x)/(self.points[1].y-self.points[0].y)
+
+    def isValid(self):
+        if(len(self.points) != 2 or (self.points[0].x == self.points[1].x and self.points[0].y == self.points[1].y)):
+            return False
+        return True
+
     def getXMax(self):
         return self.points[0].x if self.points[0].x > self.points[1].x else self.points[1].x
 
@@ -118,7 +124,7 @@ class arc:
             p1=p2
         
     def getPoint(self,angle):
-        return point(self.center.x+self.radius*cos(angle)*sin(self.yaw), self.center.y-self.radius*sin(angle)/tan(self.pitch))
+        return point(self.center.x+self.radius*cos(angle)*sin(self.yaw), self.center.y-self.radius*sin(angle)*cos(self.pitch))
 
 
 
