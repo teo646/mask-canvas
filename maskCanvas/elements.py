@@ -36,7 +36,7 @@ class line_seg:
             self.useDX = True if abs(self.points[1].x - self.points[0].x) > abs(self.points[1].y - self.points[0].y) else False
             if(self.useDX and self.points[0].x > self.points[1].x):
                 self.points.reverse()
-            elif(self.points[0].y > self.points[1].y):
+            elif(not self.useDX and self.points[0].y > self.points[1].y):
                 self.points.reverse()
 
             if(self.useDX):
@@ -62,7 +62,6 @@ class line_seg:
         return self.points[0].y if self.points[0].y < self.points[1].y else self.points[1].y
 
     def draw(self, image, magnification):
-        print(self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'))
         return cv2.line(image, self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
 
     def getLineIntersection(self, line):
@@ -120,12 +119,12 @@ class arc:
         p1 = self.getPoint(start_angle)
         for angle in np.arange(start_angle+unit_angle, end_angle, unit_angle):
             p2 = self.getPoint(angle)
-            self.lines.append(line_seg([p1,p2]))
+            self.lines.append([p1,p2])
             p1=p2
         
     def getPoint(self,angle):
-        return point(self.center.x+self.radius*cos(angle)*sin(self.yaw), self.center.y-self.radius*sin(angle)*cos(self.pitch))
+        return point(self.center.x+self.radius*cos(angle)*cos(self.yaw), self.center.y-(sin(self.yaw)*cos(angle)*sin(self.pitch)+sin(angle)*cos(self.pitch))*self.radius)
 
 
 
-
+#               point(point_.x + cos(roll)*cos(yaw)*length*self.scale, point_.y - (sin(yaw)*cos(roll)*sin(pitch)+sin(roll)*cos(pitch))*length*selfssdd.scale)

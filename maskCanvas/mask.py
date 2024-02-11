@@ -55,6 +55,7 @@ class mask:
 
         #if there is any intersection
         masked_lines = []
+        print(line.useDX)
         if(point1_index%2 == 0):
             masked_lines.append(line_seg([line.points[0], intersections[point1_index]], color = line.color, thickness = line.thickness))
             point1_index += 1

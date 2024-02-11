@@ -5,15 +5,21 @@ from .mask import mask
 import math
 
 class canvas:
-    def __init__(self):
+    def __init__(self, color=(0,0,0), thickness=0.3):
         self.line_segs = []
         self.masks = []
+        self.color = color
+        self.thickness = thickness
 
-    #you an either put line or two points as a parameter
+    def changePen(self, color, thickness):
+        self.color = color
+        self.thickness = thickness
+
+    #you can either put line or two points as a parameter
     #this needs to be edited to masked by only nearby masks
     def registerLineSeg(self, line):
         if(not isinstance(line, line_seg)):
-            line = line_seg(line)
+            line = line_seg(line, self.color, self.thickness)
 
         if(line.isValid()):
             line_segs_to_mask  = [line] 
