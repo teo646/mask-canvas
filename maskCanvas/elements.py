@@ -17,8 +17,6 @@ class point:
     def print(self):
         print(self.x, self.y)
 
-
-
 class line_seg:
     def __init__(self, points, color = DEFAULT_LINE_COLOR, thickness = DEFAULT_LINE_THICKNESS):
 

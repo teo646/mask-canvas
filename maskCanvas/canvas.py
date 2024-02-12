@@ -26,7 +26,8 @@ class canvas:
             for mask in self.masks:
                 masked_lines = []
                 for line in line_segs_to_mask:
-                    masked_lines += mask.maskLineSeg(line)
+                    if(line.isValid()):
+                        masked_lines += mask.maskLineSeg(line)
                 line_segs_to_mask = masked_lines
             self.line_segs += line_segs_to_mask
         
@@ -42,6 +43,9 @@ class canvas:
         if(not isinstance(mask_instance, mask)):
             mask_instance = mask(mask_instance)
         self.masks.append(mask_instance)
+
+    def getLines(self):
+        return self.line_segs
 
     def draw(self, magnification):
         x_max = math.ceil(max(self.line_segs, key = lambda c: c.getXMax()).getXMax()*1.2)
