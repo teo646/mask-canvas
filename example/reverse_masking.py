@@ -6,7 +6,7 @@ def main():
     mask2_path = [[22,22],[25,22],[25,28],[22,28]]
     for i in range(len(mask1_path)):
         c.registerLineSeg([mask1_path[i-1],mask1_path[i]])
-    c.registerMask(mask1_path)
+    c.registerMask(reverse_mask(mask1_path))
 
 
 

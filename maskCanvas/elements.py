@@ -47,6 +47,16 @@ class line_seg:
             return False
         return True
 
+
+    def getLength(self):
+        return np.sqrt((self.points[0].x-self.points[1].x)**2 + (self.points[0].y-self.points[1].y)**2)
+
+    def getFrontHalf(self):
+        return line_seg([self.points[0], point((self.points[0].x+self.points[1].x)/2, (self.points[0].y+self.points[1].x)/2)]) 
+
+    def getBackHalf(self):
+        return line_seg([point((self.points[0].x+self.points[1].x)/2, (self.points[0].y+self.points[1].y)/2), self.points[1]])
+
     def getXMax(self):
         return self.points[0].x if self.points[0].x > self.points[1].x else self.points[1].x
 
@@ -58,9 +68,6 @@ class line_seg:
 
     def getYMin(self):
         return self.points[0].y if self.points[0].y < self.points[1].y else self.points[1].y
-
-    def draw(self, image, magnification):
-        return cv2.line(image, self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
 
     def getLineIntersection(self, line):
         # Line AB represented as a1x + b1y = c1
@@ -80,13 +87,12 @@ class line_seg:
 
         determinant = a1*b2 - a2*b1
 
-        try:
-            x = (b2*c1 - b1*c2)/determinant
-            y = (a1*c2 - a2*c1)/determinant
-        except ZeroDivisionError as e:
+        if(determinant == 0):
             print("you tried to get intersection of parallel lines")
             return None
         else:
+            x = (b2*c1 - b1*c2)/determinant
+            y = (a1*c2 - a2*c1)/determinant
             return point(x,y)
    
     def getIntercept(self, point):
@@ -98,6 +104,10 @@ class line_seg:
     def print(self):
         self.points[0].print()
         self.points[1].print()
+
+    def draw(self, image, magnification):
+        return cv2.line(image, self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
+
 
 
 class arc:
@@ -115,14 +125,12 @@ class arc:
         unit_angle = self.unit_line_length/radius
 
         p1 = self.getPoint(start_angle)
-        for angle in np.arange(start_angle+unit_angle, end_angle, unit_angle):
+        for angle in np.arange(start_angle+unit_angle, end_angle+unit_angle, unit_angle):
             p2 = self.getPoint(angle)
             self.lines.append([p1,p2])
-            p1=p2
+            p1 = p2
         
     def getPoint(self,angle):
         return point(self.center.x+self.radius*cos(angle)*cos(self.yaw), self.center.y-(sin(self.yaw)*cos(angle)*sin(self.pitch)+sin(angle)*cos(self.pitch))*self.radius)
 
 
-
-#               point(point_.x + cos(roll)*cos(yaw)*length*self.scale, point_.y - (sin(yaw)*cos(roll)*sin(pitch)+sin(roll)*cos(pitch))*length*selfssdd.scale)

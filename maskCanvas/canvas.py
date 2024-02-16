@@ -42,7 +42,10 @@ class canvas:
     def registerMask(self, mask_instance):
         if(not isinstance(mask_instance, mask)):
             mask_instance = mask(mask_instance)
-        self.masks.append(mask_instance)
+
+        if(mask_instance.isValid()):
+            self.masks.append(mask_instance)
+
 
     def getLines(self):
         return self.line_segs
