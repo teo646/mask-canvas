@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
-from .elements import line_seg
+from .elements import line_segment, path
 from .mask import mask
+from .util import showImage
 import math
 
 class canvas:
@@ -15,11 +16,9 @@ class canvas:
         self.color = color
         self.thickness = thickness
 
-    #you can either put line or two points as a parameter
-    #this needs to be edited to masked by only nearby masks
-    def registerLineSeg(self, line):
-        if(not isinstance(line, line_seg)):
-            line = line_seg(line, self.color, self.thickness)
+    def drawLineSegment(self, line):
+        if(not isinstance(line, line_segment)):
+            line = line_segment(line, self.color, self.thickness)
 
         if(line.isValid()):
             line_segs_to_mask  = [line] 
@@ -27,16 +26,17 @@ class canvas:
                 masked_lines = []
                 for line in line_segs_to_mask:
                     if(line.isValid()):
-                        masked_lines += mask.maskLineSeg(line)
+                        masked_lines += mask.maskLineSegment(line)
                 line_segs_to_mask = masked_lines
             self.line_segs += line_segs_to_mask
         
-    def registerLineSegs(self, lines):
-        for line in lines:
-            self.registerLineSeg(line)
+    def drawPath(self, path_):
+        if(not isinstance(path_, path)):
+            path_ = path(path_, self.color, self.thickness)
 
-    def registerArc(self, arc):
-        self.registerLineSegs(arc.lines)
+        for line in path_.lines:
+            self.drawLineSegment(line)
+
 
     #you can either put mask or path as a parameter
     def registerMask(self, mask_instance):
@@ -47,16 +47,14 @@ class canvas:
             self.masks.append(mask_instance)
 
 
-    def getLines(self):
-        return self.line_segs
 
-    def draw(self, magnification):
+    def show(self, magnification):
         x_max = math.ceil(max(self.line_segs, key = lambda c: c.getXMax()).getXMax()*1.2)
         y_max = math.ceil(max(self.line_segs, key = lambda c: c.getYMax()).getYMax()*1.2)
 
-        canvas = np.full((y_max*magnification,x_max*magnification,3), 255, dtype='uint8')
+        image = np.full((y_max*magnification,x_max*magnification,3), 255, dtype='uint8')
 
         for line in self.line_segs:
-            canvas = line.draw(canvas, magnification)
+            image = line.draw(image, magnification)
 
-        return canvas
+        showImage(image)

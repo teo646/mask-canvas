@@ -5,24 +5,33 @@ import cv2
 DEFAULT_LINE_COLOR = (0,0,0)
 DEFAULT_LINE_THICKNESS = 0.3
 
+class element:
+    def __init__(self):
+        pass
+    def draw(self, image, magnification):
+        pass 
 
-class point:
+
+class point(element):
     def __init__(self, x, y):
+        super().__init__()
         self.x = x
         self.y = y
 
     def asNumpy(self, magnification):
         return np.array([self.x, self.y])*magnification
 
-    def print(self):
-        print(self.x, self.y)
+    def draw(self, image, magnification):
+        return cv2.circle(image, self.asNumpy(magnification), 1, (0,0,0))
 
-class line_seg:
-    def __init__(self, points, color = DEFAULT_LINE_COLOR, thickness = DEFAULT_LINE_THICKNESS):
 
+class line_segment(element):
+    def __init__(self, points, color =DEFAULT_LINE_COLOR, thickness = DEFAULT_LINE_THICKNESS):
+        super().__init__()
         self.points = points
-        self.color= color
+        self.color = color
         self.thickness = thickness
+
         if(not isinstance(self.points[0], point)):
             tmp = []
             for p in self.points:
@@ -46,16 +55,6 @@ class line_seg:
         if(len(self.points) != 2 or (self.points[0].x == self.points[1].x and self.points[0].y == self.points[1].y)):
             return False
         return True
-
-
-    def getLength(self):
-        return np.sqrt((self.points[0].x-self.points[1].x)**2 + (self.points[0].y-self.points[1].y)**2)
-
-    def getFrontHalf(self):
-        return line_seg([self.points[0], point((self.points[0].x+self.points[1].x)/2, (self.points[0].y+self.points[1].x)/2)]) 
-
-    def getBackHalf(self):
-        return line_seg([point((self.points[0].x+self.points[1].x)/2, (self.points[0].y+self.points[1].y)/2), self.points[1]])
 
     def getXMax(self):
         return self.points[0].x if self.points[0].x > self.points[1].x else self.points[1].x
@@ -109,8 +108,28 @@ class line_seg:
         return cv2.line(image, self.points[0].asNumpy(magnification).astype('uint'), self.points[1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
 
 
+class path(element):
+    def __init__(self, points):
+        super().__init__()
+        
+        if(not isinstance(points[0], point)):
+            tmp = []
+            for p in points:
+                tmp.append(point(p[0], p[1]))
+            points = tmp
 
-class arc:
+        self.lines = []
+        for i in range(len(points)-1):
+            self.lines.append(line_seg([points[i],points[i+1]]))
+        self.color = DEFAULT_LINE_COLOR
+        self.thickness = DEFAULT_LINE_THICKNESS
+
+    def draw(self, image, magnification):
+        for line in self.lines:
+            image = cv2.line(image, self.path[i].asNumpy(magnification).astype('uint'), self.path[i+1].asNumpy(magnification).astype('uint'), self.color, int(self.thickness*magnification))
+        return image
+
+class arc(path):
     unit_line_length = 0.5
     def __init__(self, center, radius, pitch=0, yaw=0, start_angle=0, end_angle=2*pi):
         self.lines = []

@@ -1,31 +1,42 @@
 import numpy as np
 from bisect import bisect_left
 from .util import *
-from .elements import line_seg, point
+from .elements import line_segment, point
 #you can either put point instance or coordinates as path
 
 
 class mask:
-    def __init__(self, path):
-        if(not isinstance(path[0], point)):
-            tmp = []
-            for p in path:
-                tmp.append(point(p[0], p[1]))
-            path = tmp
 
+
+    def isValid(self):
+        if(len(self.path) > 2):
+            return True
+        else:
+            return False
+
+    def removeDuplicatedIndex(self, path):
         duplicated_index = []
         for i in range(len(path)):
             if(path[i-1].x == path[i].x and path[i-1].y == path[i].y):
                 duplicated_index.append(i)
         for i in reversed(duplicated_index):
             del path[i]
-        self.path = path
+        
+        return path
 
-    def isValid(self):
-        if(len(self.path) < 3):
-            return False
-        else:
-            return True
+    def convertToPoints(self, points):
+        if(not isinstance(points[0], point)):
+            tmp = []
+            for p in points:
+                tmp.append(point(p[0], p[1]))
+            points = tmp
+
+        return points
+
+    def __init__(self, path):
+        path = self.convertToPoints(path)
+        self.path = self.removeDuplicatedIndex(path)
+
             
 
     def getIntersectionsAndIndex(self, line):
@@ -38,7 +49,7 @@ class mask:
             vertex2_sign = line.getIntercept(self.path[index]) - intercept
             #basic intersecting case
             if(vertex1_sign*vertex2_sign < 0):
-                intersection = line.getLineIntersection(line_seg([self.path[index-1], self.path[index]]))
+                intersection = line.getLineIntersection(line_segment([self.path[index-1], self.path[index]]))
                 if(intersection):
                     intersections.append(intersection)
             #case where a vertex lies on the line
@@ -60,7 +71,7 @@ class mask:
         return intersections, point1_index, point2_index
 
     #mask line segment
-    def maskLineSeg(self, line):
+    def maskLineSegment(self, line):
         intersections, point1_index, point2_index = self.getIntersectionsAndIndex(line)
 
         #if there is no intersections
@@ -74,13 +85,13 @@ class mask:
         #if there is any intersection
         masked_lines = []
         if(point1_index%2 == 0):
-            masked_lines.append(line_seg([line.points[0], intersections[point1_index]], color = line.color, thickness = line.thickness))
+            masked_lines.append(line_segment([line.points[0], intersections[point1_index]], color = line.color, thickness = line.thickness))
             point1_index += 1
         if(point2_index%2 == 0):
-            masked_lines.append(line_seg([intersections[point2_index-1], line.points[1]], color = line.color, thickness = line.thickness))
+            masked_lines.append(line_segment([intersections[point2_index-1], line.points[1]], color = line.color, thickness = line.thickness))
             point2_index -= 1
         for index in range(point1_index, point2_index, 2):
-            masked_lines.append(line_seg([intersections[index], intersections[index+1]], color = line.color, thickness = line.thickness))
+            masked_lines.append(line_segment([intersections[index], intersections[index+1]], color = line.color, thickness = line.thickness))
 
         return masked_lines
 
@@ -89,7 +100,7 @@ class reverse_mask(mask):
     def __init__(self, path):
         super().__init__(path)
 
-    def maskLineSeg(self, line):
+    def maskLineSegment(self, line):
         intersections, point1_index, point2_index = self.getIntersectionsAndIndex(line)
 
         #if there is no intersections
@@ -103,13 +114,13 @@ class reverse_mask(mask):
         #if there is any intersection
         masked_lines = []
         if(point1_index%2 == 1):
-            masked_lines.append(line_seg([line.points[0], intersections[point1_index]], color = line.color, thickness = line.thickness))
+            masked_lines.append(line_segment([line.points[0], intersections[point1_index]], color = line.color, thickness = line.thickness))
             point1_index += 1
         if(point2_index%2 == 1):
-            masked_lines.append(line_seg([intersections[point2_index-1], line.points[1]], color = line.color, thickness = line.thickness))
+            masked_lines.append(line_segment([intersections[point2_index-1], line.points[1]], color = line.color, thickness = line.thickness))
             point2_index -= 1
         for index in range(point1_index, point2_index, 2):
-            masked_lines.append(line_seg([intersections[index], intersections[index+1]], color = line.color, thickness = line.thickness))
+            masked_lines.append(line_segment([intersections[index], intersections[index+1]], color = line.color, thickness = line.thickness))
 
         return masked_lines
 
