@@ -1,15 +1,18 @@
 from maskCanvas import Canvas, Polyline, Mask, Point, Circle, Graph
 from maskCanvas import Pen
 from math import cos, sin, pi
-colors = [ (0, 0, 255),  (0, 255, 0),  (255, 0, 0),  (0, 255, 255),  (255, 0, 255)]
 def main():
+    #size of a3
     c= Canvas(420,297,5,frame=False)
 
     pen = Pen((60,60,60),0.3)
-    graph1 = Graph((lambda t: 100*cos(t)+30*cos(-pi*t)),\
-                     (lambda t: 100*sin(t)+30*sin(-pi*t)), Pen((255, 0, 255), 0.3), t_range=[0,200*pi])
-    graph1.move(210,149)
-    c.draw_polyline(graph1)
+    circle = Circle(60, pen)
+    for point in circle.path[::100]:
+        sub_circle = Circle(20, pen)
+        sub_circle.move_center(point)
+        sub_circle.move(210, 149)
+        c.draw_polyline(sub_circle)
+
 
     '''
     for i in range(66):
