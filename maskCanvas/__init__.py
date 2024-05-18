@@ -1,4 +1,5 @@
-from .polyline import Polyline, Arc, Graph, Regular_polygone 
+from .polyline import Polyline, Arc, Graph, Regular_polygone, Rectangle 
+from .perlin import noise_polyline
 from .components import Pen, Point
 from .canvas import Canvas
 from .mask import Mask

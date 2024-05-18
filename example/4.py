@@ -1,4 +1,4 @@
-from maskCanvas import Canvas, Polyline, Mask, Point, Circle, Graph, Regular_polygone
+from maskCanvas import Canvas, Polyline, Mask, Point, Arc, Graph, Regular_polygone
 from maskCanvas import Pen, draw_linear_background
 from math import cos, sin, pi
 def main():

@@ -107,3 +107,6 @@ def get_outline(points):
                     return [Point(points[p][0], points[p][1]) for p in outline_path]
                 outline_path.append(edge[1])
 
+
+def get_distance(p1, p2):
+    return np.linalg.norm(p1.coordinate[:2]-p2.coordinate[:2])

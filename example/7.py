@@ -16,13 +16,13 @@ def main():
 
     pen = Pen((250,100,100),0.3)
 
-    graph6 = Graph((lambda t: 200*cos(t)+200*cos(pi*t)),\
-            (lambda t: 200*sin(t)+200*sin(pi*t)), Pen((10,10,10), 0.3), t_range=[0,150*pi], z_func=z_function)
+    graph6 = Graph((lambda t: 100*cos(t)+100*cos(pi*t)),\
+            (lambda t: 100*sin(t)+100*sin(pi*t)), Pen((10,10,10), 0.3), t_range=[0,400*pi], z_func=z_function)
     graph6.move(210, 148)
 
     for index, point in enumerate(graph6.path):
         if(index%3 == 0):
-            circle = Arc(point.coordinate[2]*2, pen)
+            circle = Arc(3, pen)
             circle.move_center(point)
             c.draw_polyline(circle)
 

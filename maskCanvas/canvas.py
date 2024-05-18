@@ -86,4 +86,5 @@ class Canvas:
 
         save_image = input("do you want to save the image?")
         if(save_image == 'y'):
-            cv2.imwrite('images/'+str(random.random())+'image.jpg', image)
+            file_name=input("enter file name: ")
+            cv2.imwrite('images/'+file_name+'.jpg', image)

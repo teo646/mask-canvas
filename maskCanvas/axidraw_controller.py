@@ -1,5 +1,6 @@
 from pyaxidraw import axidraw
 from .components import Point
+from .perlin import noise_polyline
 import numpy as np
 import cv2
 
@@ -83,8 +84,8 @@ class AxidrawController:
                 is_axidraw_drawing = False
             else:
                 ad.options.units = 2              # set working units to mm.
-                ad.options.pen_pos_up = 62        # select a large range for the pen up/down swing
-                ad.options.pen_pos_down = 38
+                ad.options.pen_pos_up = 67        # select a large range for the pen up/down swing
+                ad.options.pen_pos_down = 41
                 ad.options.model = 2
                 ad.update()
 
@@ -107,8 +108,6 @@ class AxidrawController:
                         break
 
             for polyline in polylines[pen]:
-                if(is_axidraw_drawing):
-                    ad.draw_path([point.coordinate[:2] for point in polyline.path])     
                 if(is_digital_drawing):
                     for p1, p2 in zip(polyline.path, polyline.path[1:]):
                         p1_cv2 = p1.as_numpy(magnification)
@@ -117,6 +116,8 @@ class AxidrawController:
 
                     cv2.imshow('digital_image',digital_image)
                     cv2.waitKey(1)
+                if(is_axidraw_drawing):
+                    ad.draw_path([point.coordinate[:2] for point in polyline.path])
     
 
         #terminate process

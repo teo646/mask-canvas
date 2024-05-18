@@ -1,4 +1,4 @@
-from maskCanvas import Canvas, Polyline, Mask, Point, Circle, Graph, Regular_polygone
+from maskCanvas import Canvas, Polyline, Mask, Point, Arc, Graph, Regular_polygone
 from maskCanvas import Pen, draw_linear_background
 from maskCanvas import AxidrawController
 from math import cos, sin, pi
@@ -195,10 +195,10 @@ def main():
     graph6.move(115, 200)
     c.draw_polyline(graph6)
 
-    c.show_bitmap(50)
+    c.show_bitmap(50, noise=True)
     
     ac = AxidrawController(c)
-    ac.draw(False, True)
+    #ac.draw(False, True)
 
 if __name__ == "__main__":
     main()

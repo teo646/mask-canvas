@@ -2,9 +2,13 @@ LICENSE
 README.md
 setup.py
 maskCanvas/__init__.py
+maskCanvas/axidraw_controller.py
+maskCanvas/background.py
 maskCanvas/canvas.py
-maskCanvas/elements.py
+maskCanvas/components.py
 maskCanvas/mask.py
+maskCanvas/polyline.py
+maskCanvas/region.py
 maskCanvas/util.py
 mask_canvas.egg-info/PKG-INFO
 mask_canvas.egg-info/SOURCES.txt

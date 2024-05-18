@@ -106,11 +106,12 @@ class Graph(Polyline):
     def _get_center(self):
         return Point(0,0,0)
 
-    def __init__(self, x_func, y_func, pen, t_range=(0,2*pi), z_func=lambda t: 0):
+    def __init__(self, x_func, y_func, pen, t_range=(0,2*pi), z_func=lambda t: 0, precision=0.01):
         self.x_func = x_func
         self.y_func = y_func
         self.z_func = z_func
         self.t_range = t_range
+        self.precision=precision
         if(t_range[0]<t_range[1]):
             path = self._get_path()
         else:
@@ -124,7 +125,7 @@ class Graph(Polyline):
         while t_current < self.t_range[1]:
             current_point = Point(self.x_func(t_current), self.y_func(t_current), self.z_func(t_current))
             path.append(current_point)
-            t_current += 0.05
+            t_current += self.precision
         return path
 
     def get_mask(self):
@@ -150,9 +151,9 @@ class Graph(Polyline):
 
 
 class Arc(Graph):
-    def __init__(self, radius, pen, t_range=(0,2*pi)):
+    def __init__(self, radius, pen, t_range=(0,2*pi), precision=0.1):
         path = []
         x_func=lambda t: radius*cos(t)
         y_func=lambda t: radius*sin(t)
-        super().__init__(x_func, y_func, pen, t_range=t_range)
+        super().__init__(x_func, y_func, pen, t_range=t_range, precision=precision)
 
