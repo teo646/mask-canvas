@@ -23,5 +23,5 @@ def noise_polyline(polyline, scale=0.1, amplitude=2):
             path.append(Point(x+noise*sin_theta,y-noise*cos_theta))
 
 
-    return Polyline(path, polyline.pen)
+    return Polyline(path, polyline.pen, fill=polyline.fill)
 

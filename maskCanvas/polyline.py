@@ -14,12 +14,16 @@ class Polyline():
         z_mean = np.array([p.coordinate[2] for p in self.path]).mean()
         return Point(x_mean, y_mean, z_mean)
 
-    def __init__(self, path, pen):
+    def __init__(self, path, pen, fill=False):
         self.path = path
         self.pen = pen
         self.center = self._get_center()
+        self.fill=fill
 
     def draw_bitmap(self, image, magnification):
+        if(self.fill):
+            pts = np.array([point.as_numpy(magnification) for point in self.path])
+            image = cv2.fillPoly(image, [pts], self.pen.color)
         for p1, p2 in zip(self.path, self.path[1:]):
             image = cv2.line(image, p1.as_numpy(magnification), p2.as_numpy(magnification)\
                     , self.pen.color, int(self.pen.thickness*magnification))
@@ -77,10 +81,10 @@ class Rectangle(Polyline):
     def _get_center(self):
         return Point(0,0,0)
 
-    def __init__(self, x, y, pen):
+    def __init__(self, x, y, pen, fill = False):
         path = [Point(-x/2, -y/2), Point(x/2, -y/2), Point(x/2, y/2),\
                 Point(-x/2, y/2), Point(-x/2,-y/2)]
-        super().__init__(path, pen)
+        super().__init__(path, pen, fill=fill)
 
     def get_mask(self):
         return Mask(self.path)
@@ -89,14 +93,14 @@ class Regular_polygone(Polyline):
     def _get_center(self):
         return Point(0,0,0)
 
-    def __init__(self, radius, num_angles, pen):
+    def __init__(self, radius, num_angles, pen, fill = False):
         inner_angle = 0
         path = []
         for index in range(num_angles+1):
             path.append(Point(cos(inner_angle)*radius, sin(inner_angle)*radius))
             inner_angle += 2*pi/num_angles
 
-        super().__init__(path, pen)
+        super().__init__(path, pen, fill=fill)
 
     def get_mask(self):
         return Mask(self.path)
@@ -106,7 +110,7 @@ class Graph(Polyline):
     def _get_center(self):
         return Point(0,0,0)
 
-    def __init__(self, x_func, y_func, pen, t_range=(0,2*pi), z_func=lambda t: 0, precision=0.01):
+    def __init__(self, x_func, y_func, pen, t_range=(0,2*pi), z_func=lambda t: 0, precision=0.01, fill=False):
         self.x_func = x_func
         self.y_func = y_func
         self.z_func = z_func
@@ -117,12 +121,12 @@ class Graph(Polyline):
         else:
             print("t_range begin should be smaller than the end")
             path = []
-        super().__init__(path, pen)
+        super().__init__(path, pen,fill=fill)
 
     def _get_path(self):
         path=[]
         t_current = self.t_range[0]
-        while t_current < self.t_range[1]:
+        while t_current < self.t_range[1]+self.precision:
             current_point = Point(self.x_func(t_current), self.y_func(t_current), self.z_func(t_current))
             path.append(current_point)
             t_current += self.precision
@@ -151,9 +155,9 @@ class Graph(Polyline):
 
 
 class Arc(Graph):
-    def __init__(self, radius, pen, t_range=(0,2*pi), precision=0.1):
+    def __init__(self, radius, pen, t_range=(0,2*pi), precision=0.1,fill=False):
         path = []
         x_func=lambda t: radius*cos(t)
         y_func=lambda t: radius*sin(t)
-        super().__init__(x_func, y_func, pen, t_range=t_range, precision=precision)
+        super().__init__(x_func, y_func, pen, t_range=t_range, precision=precision,fill=fill)
 

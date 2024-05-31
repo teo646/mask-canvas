@@ -24,21 +24,11 @@ def main():
     for i in range(1,69):
         for j in range(1, 49):
             #square = Rectangle(5,5,orange_pen)
-            if(j>20 and j<37):
-                square = Rectangle(5,5,blue_pen)
-                square.move(2+i*6, 2+j*6)
-                circle = Arc(2-i/100, blue_pen, precision=0.3, fill=True)
-                circle.move(2+i*6, 2+j*6)
-                square = noise_polyline(square, amplitude=i/20)
-                circle = noise_polyline(circle, scale=0.3, amplitude=i/15)
-                c.draw_polyline(square)
-                c.draw_polyline(circle)
-            else:
-                square = Rectangle(5,5,black_pen)
-                #circle = Arc(1.5, orange_pen, precision=0.3)
-                square.move(2+i*6, 2+j*6)
-                #circle.move(2+i*6, 2+j*6)
-                c.draw_polyline(square)
+            square = Rectangle(5,5,black_pen)
+            #circle = Arc(1.5, orange_pen, precision=0.3)
+            square.move(2+i*6, 2+j*6)
+            #circle.move(2+i*6, 2+j*6)
+            c.draw_polyline(square)
 
             
 

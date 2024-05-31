@@ -32,11 +32,11 @@ class Canvas:
                     current_path.append(current_point)
                 else:
                     if(not len(current_path) == 1):
-                        self.polylines.append(Polyline(current_path, polyline.pen))
+                        self.polylines.append(Polyline(current_path, polyline.pen, fill=polyline.fill))
                     current_path = [line[0], line[1]]
                     current_point = line[1]
         if(not len(current_path) == 1):
-            self.polylines.append(Polyline(current_path, polyline.pen))   
+            self.polylines.append(Polyline(current_path, polyline.pen, fill=polyline.fill))   
 
     def _mask_segment(self, point1, point2):
         if(not identical_points(point1, point2)):
