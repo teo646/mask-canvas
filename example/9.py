@@ -1,6 +1,6 @@
 from maskCanvas import Canvas, Polyline, Mask, Point, Arc, Graph, Regular_polygone, Rectangle
 from maskCanvas import Pen, draw_linear_background, noise_polyline
-from maskCanvas import AxidrawController
+from maskCanvas import AxidrawInterface
 from math import cos, sin, pi
 from copy import deepcopy
 import numpy as np
@@ -21,8 +21,8 @@ def main():
     black_pen=Pen((0,0,0), 0.3)
 
 
-    for i in range(1,69):
-        for j in range(1, 49):
+    for i in range(1,3):#69
+        for j in range(1, 3):#49
             #square = Rectangle(5,5,orange_pen)
             square = Rectangle(5,5,black_pen)
             #circle = Arc(1.5, orange_pen, precision=0.3)
@@ -34,7 +34,7 @@ def main():
 
     c.show_bitmap(50)
     
-    ac = AxidrawController(c)
+    ac = AxidrawInterface(c)
 
 if __name__ == "__main__":
     main()

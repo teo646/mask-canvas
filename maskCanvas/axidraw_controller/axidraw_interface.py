@@ -1,34 +1,35 @@
-from .plan_polylines import plan_polyline
+from .plan_polylines import plan_polylines
 from maskCanvas import Point, Polyline, Pen
-from threading import Thread
+from .axidraw_controller import AxidrawController
+from .digital_image import DigitalImage
 
 
 
-command_info =
+command_info ="""
+Axidraw Controller Commands---------------------------------------
+                                                                  |
+-help: print this page                                            |
+                                                                  |
+-draw: start drawing process.                                     |
+                                                                  |
+-stop: pause drawing process.                                     |
+       do nothing if you haven't start drawing process.           |     
+                                                                  |
+-restart: restart drawing process.                                |
+                                                                  |
+-align: move plotter to every edges and dot to check if the       |
+        pen is aligned collectly.                                 |
+                                                                  |
+-pen: move pen down and up once to check pen movement range       |
+                                                                  |
+-quit: stop precess and exit program. use with care               |
+------------------------------------------------------------------
 """
-Axidraw Controller Commands
-
--help: print this page
-
--draw: start drawing process.
-
--stop: pause drawing process. 
-       do nothing if you haven't start drawing process.
-
--restart: restart drawing process.
-
--align: move plotter to every edges and dot to check if the
-        pen is aligned collectly. 
-
--pen: move pen down and up once to check pen movement range
-
--quit: stop precess and exit program. use with care
-"""
 
 
 
 
-class UserInterface:
+class AxidrawInterface:
 
     def _find_match(str_object, objects):
         for _object in objects:
@@ -60,7 +61,7 @@ class UserInterface:
                     print("invalid color")
                     continue
 
-                if(len(drawing_detail) == 3) and drawing_detail[2]<len(self.polylines[color])):
+                if(len(drawing_detail) == 3 and drawing_detail[2]<len(self.polylines[color])):
                     start = drawing_detail[1]
                     end = drawing_detail[2]
                 elif(len(drawing_detail) == 3):
@@ -83,27 +84,27 @@ class UserInterface:
             elif(command=="start"):
                 self.axidraw.paused = False
 
-            elif(command="align"):
+            elif(command=="align"):
                 polylines = [Polyline([Point(0,0)], Pen([0,0,0], 0)),
                             Polyline([Point(self.canvas.x,0)], Pen([0,0,0], 0)),
                             Polyline([Point(self.canvas.x,self.canvas.y)], Pen([0,0,0], 0)),
                             Polyline([Point(0,self.canvas.y)], Pen([0,0,0], 0))]
                 self.axidraw.register_polylines(polylines, priority=1)
 
-            elif(command="pen"):
+            elif(command=="pen"):
                 polylines = [Polyline([Point(0,0)], Pen([0,0,0], 0))]
                 self.axidraw.register_polylines(polylines, priority=1)
 
-            elif(command="quit"):
+            elif(command=="quit"):
                 self.digital_image.terminate()
                 self.axidraw.terminate()
-                exit()
+                exit(0)
 
             elif(command == 'help'):
                 print(command_info)
 
             else:
-                print("unkown command '",cammand,"'")
+                print("unkown command '",command,"'")
                 print(command_info)
 
     def __init__(self, canvas):
@@ -114,7 +115,7 @@ class UserInterface:
         self.polylines = plan_polylines(self.canvas.polylines)
         print("arranging lines done")
 
-        axidraw = AxidrawController()
-        digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
+        self.axidraw = AxidrawController()
+        self.digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
         self._process()
 
