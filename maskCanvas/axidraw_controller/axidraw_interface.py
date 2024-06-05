@@ -6,24 +6,26 @@ from .digital_image import DigitalImage
 
 
 command_info ="""
-Axidraw Controller Commands---------------------------------------
-                                                                  |
--help: print this page                                            |
-                                                                  |
--draw: start drawing process.                                     |
-                                                                  |
--stop: pause drawing process.                                     |
-       do nothing if you haven't start drawing process.           |     
-                                                                  |
--restart: restart drawing process.                                |
-                                                                  |
--align: move plotter to every edges and dot to check if the       |
-        pen is aligned collectly.                                 |
-                                                                  |
--pen: move pen down and up once to check pen movement range       |
-                                                                  |
--quit: stop precess and exit program. use with care               |
-------------------------------------------------------------------
+Axidraw Controller Commands--------------------------------------
+                                                                |
+-help: print this page                                          |
+                                                                |
+-draw all: Draw all of the lines on canvas.                     |
+                                                                |
+-draw some: Draw some of the lines on canvas.                   |
+                                                                |
+-stop: pause drawing process.                                   |
+       do nothing if you haven't start drawing process.         |     
+                                                                |
+-start: restart drawing process.                                |
+                                                                |
+-align: move plotter to every edges and dot to check if the     |
+        pen is aligned collectly.                               |
+                                                                |
+-pen: move pen down and up once to check pen movement range     |
+                                                                |
+-quit: stop precess and exit program. use with care             |
+-----------------------------------------------------------------
 """
 
 
@@ -31,10 +33,11 @@ Axidraw Controller Commands---------------------------------------
 
 class AxidrawInterface:
 
-    def _find_match(str_object, objects):
-        for _object in objects:
-            if(str_object == str(_object)):
-                return _object
+    @staticmethod
+    def _find_matching_pen(target_pen, pens):
+        for pen in pens:
+            if(target_pen == (str(pen.color)).replace(" ", "")):
+                return pen
         return None
 
     def _process(self):
@@ -47,15 +50,13 @@ class AxidrawInterface:
 
             elif(command=="draw all"):
                 polylines = [j for sub in self.polylines.values() for j in sub]
-                self.digital_image.draw_polylines(polylines)
                 self.axidraw.register_polylines(polylines)
 
-
             elif(command=="draw some"):
-                print(self.polylines.keys())
-                drawing_detail = input("choose color and range from above(ex: [1,2,3] 1 20)").split()
+                print([pen.color for pen in self.polylines.keys()])
+                drawing_detail = input("choose color and range from above(ex: (1,2,3) 1 20)").split()
                 str_color = drawing_detail[0]
-                color = _find_match(str_color, self.polylines.keys())
+                color = self._find_matching_pen(str_color, self.polylines.keys())
 
                 if(color == None):
                     print("invalid color")
@@ -75,7 +76,6 @@ class AxidrawInterface:
 
                 draw_or_not = input("do you want to draw?(y/n)")
                 if(draw_or_not == "y"):
-                    self.digital_image.draw_polylines(self.polylines[color][start:end])
                     self.axidraw.register_polylines(self.polylines[color][start:end])
 
             elif(command=="stop"):
@@ -96,9 +96,9 @@ class AxidrawInterface:
                 self.axidraw.register_polylines(polylines, priority=1)
 
             elif(command=="quit"):
-                self.digital_image.terminate()
                 self.axidraw.terminate()
-                exit(0)
+                self.digital_image.terminate()
+                exit()
 
             elif(command == 'help'):
                 print(command_info)
@@ -110,12 +110,13 @@ class AxidrawInterface:
     def __init__(self, canvas):
         #canvas is drawing that you will draw.
         self.canvas = canvas
+        self.axidraw = AxidrawController()
+        self.digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
+        self.axidraw.set_digital_image(self.digital_image)
 
         print("arranging lines ...")
         self.polylines = plan_polylines(self.canvas.polylines)
         print("arranging lines done")
 
-        self.axidraw = AxidrawController()
-        self.digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
         self._process()
 
