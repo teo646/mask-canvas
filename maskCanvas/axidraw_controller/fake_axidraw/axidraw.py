@@ -17,13 +17,13 @@ class AxiDraw:
     def draw_path(self, path):
         print("axidraw drawing path:")
         print(path)
-        time.sleep(3)
+        time.sleep(1)
 
 
     def moveto(self, x, y):
         print("axidraw moving")
         print(x, y)
-        time.sleep(3)
+        time.sleep(1)
 
     def disconnect(self):
         print("axidraw disconnected")

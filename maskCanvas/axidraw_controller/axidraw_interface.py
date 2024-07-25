@@ -2,6 +2,8 @@ from .plan_polylines import plan_polylines
 from maskCanvas import Point, Polyline, Pen
 from .axidraw_controller import AxidrawController
 from .digital_image import DigitalImage
+import asyncio
+import aioconsole
 
 
 
@@ -10,9 +12,7 @@ Axidraw Controller Commands--------------------------------------
                                                                 |
 -help: print this page                                          |
                                                                 |
--draw all: Draw all of the lines on canvas.                     |
-                                                                |
--draw some: Draw some of the lines on canvas.                   |
+-draw: Draw the lines on canvas.                                |
                                                                 |
 -stop: pause drawing process.                                   |
        do nothing if you haven't start drawing process.         |     
@@ -33,72 +33,83 @@ Axidraw Controller Commands--------------------------------------
 
 class AxidrawInterface:
 
-    @staticmethod
-    def _find_matching_pen(target_pen, pens):
-        for pen in pens:
-            if(target_pen == (str(pen.color)).replace(" ", "")):
-                return pen
-        return None
+    async def _interact(self):
 
-    def _process(self):
+        async def _choose_pen():
+            print("Select the pen from below: ")
+            pens = [pen for pen in self.polylines.keys()]
+            for index, pen in enumerate(pens):
+                print("%d: (%s, %s)" %(index, str(pen.color), str(pen.thickness)))
+            pen_index = int(await aioconsole.ainput(':'))
+            if(pen_index < 0 or pen_index >= len(self.polylines.keys())):
+                print("invalid index")
+                return None
+            else:
+                return pens[pen_index]
+
+        async def _index_polylines(polylines):
+            print("The last index of polylines is %d" %(len(polylines)-1))
+            from_ = int(await aioconsole.ainput('Starting index: '))
+            to_ = int(await aioconsole.ainput('Last index: '))
+            try:
+                indexed_polylines = polylines[from_:to_+1]
+            except:
+                print("invalid indexing")
+                indexed_polylines = []
+            return indexed_polylines
+
         print(command_info)
         while 1:
-            command = input()
+            command = await aioconsole.ainput()
             if(command=="magnification"):
                 digital_image_magnification = int(input("Enter digital image magnification:"))
                 self.digital_image.register_magnification(digital_image_magnification)
+                self.digital_image.refresh()
 
-            elif(command=="draw all"):
-                polylines = [j for sub in self.polylines.values() for j in sub]
-                self.axidraw.register_polylines(polylines)
-
-            elif(command=="draw some"):
-                print([pen.color for pen in self.polylines.keys()])
-                drawing_detail = input("choose color and range from above(ex: (1,2,3) 1 20)").split()
-                str_color = drawing_detail[0]
-                color = self._find_matching_pen(str_color, self.polylines.keys())
-
-                if(color == None):
-                    print("invalid color")
+            elif(command=="draw"):
+                pen = await _choose_pen()
+                if(pen):
+                    polylines = self.polylines[pen]
+                    polylines = await _index_polylines(polylines)
+                    #if no polylines to draw(empty)
+                    if(not polylines):
+                        continue
+                else:
                     continue
 
-                if(len(drawing_detail) == 3 and drawing_detail[2]<len(self.polylines[color])):
-                    start = drawing_detail[1]
-                    end = drawing_detail[2]
-                elif(len(drawing_detail) == 3):
-                    start = drawing_detail[1]
-                    end = len(self.polylines[color])
-                else:
-                    start = 0
-                    end = len(self.polylines[color])
+                tmp_digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
+                tmp_digital_image.draw_polylines(polylines)
+                tmp_digital_image.refresh()
 
-                self.digital_image.show_polylines(self.polylines[color][start:end])
+                draw_or_not = await aioconsole.ainput("do you want to draw?(y/n): ")
+                tmp_digital_image.terminate()
 
-                draw_or_not = input("do you want to draw?(y/n)")
                 if(draw_or_not == "y"):
-                    self.axidraw.register_polylines(self.polylines[color][start:end])
+                    self.axidraw_controller.register_polylines(polylines)
 
             elif(command=="stop"):
-                self.axidraw.paused = True
+                self.axidraw_controller.paused = True
 
             elif(command=="start"):
-                self.axidraw.paused = False
+                self.axidraw_controller.paused = False
 
             elif(command=="align"):
                 polylines = [Polyline([Point(0,0)], Pen([0,0,0], 0)),
                             Polyline([Point(self.canvas.x,0)], Pen([0,0,0], 0)),
                             Polyline([Point(self.canvas.x,self.canvas.y)], Pen([0,0,0], 0)),
                             Polyline([Point(0,self.canvas.y)], Pen([0,0,0], 0))]
-                self.axidraw.register_polylines(polylines, priority=1)
+                self.axidraw_controller.register_polylines(polylines, priority=1)
 
             elif(command=="pen"):
                 polylines = [Polyline([Point(0,0)], Pen([0,0,0], 0))]
-                self.axidraw.register_polylines(polylines, priority=1)
+                self.axidraw_controller.register_polylines(polylines, priority=1)
 
             elif(command=="quit"):
-                self.axidraw.terminate()
-                self.digital_image.terminate()
-                exit()
+                self.axidraw_controller.terminate()
+                return 
+
+            elif(command=="reset"):
+                self.axidraw_controller.reset()
 
             elif(command == 'help'):
                 print(command_info)
@@ -110,13 +121,19 @@ class AxidrawInterface:
     def __init__(self, canvas):
         #canvas is drawing that you will draw.
         self.canvas = canvas
-        self.axidraw = AxidrawController()
-        self.digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
-        self.axidraw.set_digital_image(self.digital_image)
+        digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
+        self.axidraw_controller = AxidrawController(digital_image)
 
         print("arranging lines ...")
         self.polylines = plan_polylines(self.canvas.polylines)
         print("arranging lines done")
+        asyncio.run(self._process())
 
-        self._process()
+
+    async def _process(self):
+        async with asyncio.TaskGroup() as tg:
+            axidraw = tg.create_task(self.axidraw_controller.process())
+            interface = tg.create_task(self._interact())
+
+
 
