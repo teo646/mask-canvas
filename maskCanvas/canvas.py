@@ -23,6 +23,7 @@ class Canvas:
         self.register_mask(Mask(paper_region_path, reverse=True))
         
     def draw_polyline(self, polyline):
+
         current_point = polyline.path[0]
         current_path = [current_point]
         for p1, p2 in zip(polyline.path, polyline.path[1:]):

@@ -14,6 +14,11 @@ class AxidrawController:
         connected = ad.connect()    # Open serial port to AxiDraw
         ad.options.units = 2
         ad.options.model = 2
+        ad.options.speed_pendown = 100
+        ad.options.speed_penup = 100
+        ad.options.pen_rate_lower = 90
+        ad.options.pen_rate_raise = 90
+
         #ad.options.pen_pos_up = 70
         #ad.options.pen_pos_down = 50
         self.paused = False
@@ -59,7 +64,14 @@ class AxidrawController:
             
     def _draw_polyline(self, polyline):
         polyline_array = np.array([point.coordinate[:2] for point in polyline.path],dtype=np.int32)
-        self.ad.draw_path(polyline_array)
+        if(len(polyline_array) == 1):
+            #where it is a dot
+            self.ad.moveto(polyline_array[0][0], polyline_array[0][1])
+            self.ad.pendown()
+            self.ad.penup()
+        else:
+            #where it is not a dot
+            self.ad.draw_path(polyline_array)
         self.digital_image.draw_polylines([polyline])
 
     def terminate(self):
