@@ -1,6 +1,6 @@
 import numpy as np
 from perlin_noise import PerlinNoise
-from .obj import Object
+from .object import Object
 '''
 def noise_polylines(polylines, scale=0.1, amplitude=2):
     polylines_after_noise = []
@@ -35,7 +35,9 @@ class Perlin(Object):
         self.perlin_noise = PerlinNoise(seed=1)
         self.amplitude = amplitude
 
-    def get_z(self, x, y):
+    def get_z(self, point):
+        x = point.coordinate[0]
+        y = point.coordinate[1]
         return self.perlin_noise([x*self.amplitude, y*self.amplitude])
 
     def scale(self, amplitude):

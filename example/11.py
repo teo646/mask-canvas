@@ -1,5 +1,5 @@
 from maskCanvas import Canvas, Polyline, Mask, Point, Arc, Graph, Regular_polygone
-from maskCanvas import Pen, draw_linear_background, noise_polylines, AxidrawInterface
+from maskCanvas import Pen, draw_linear_background, AxidrawInterface
 from math import cos, sin, pi, atan
 import math
 import numpy as np
@@ -29,7 +29,6 @@ def main():
         line = Polyline([Point(0, i*0.5), Point(291, i*0.5)], pen1)
         c.draw_polyline(line)
 
-    c.show_bitmap(50)
     ai = AxidrawInterface(c)
 
 if __name__ == "__main__":

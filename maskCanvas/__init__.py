@@ -5,4 +5,6 @@ from .mask import Mask
 from .background import draw_linear_background
 from .axidraw_controller.axidraw_interface import AxidrawInterface
 from .solid.dot_object import dot_object
+from .solid.line_on_object import line_on_object
 from .solid.perlin import Perlin
+from .solid.object import ObjFile
