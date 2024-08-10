@@ -8,7 +8,7 @@ import random
 
 def main():
     #size of a3
-    c= Canvas(300,200,10,frame=False, paper_color= (255,255,255))
+    c= Canvas(420,297,10,frame=False, paper_color= (255,255,255))
 
     pen1 = Pen((0,0,0),0.2)
 
@@ -16,17 +16,17 @@ def main():
 
     budha.rotate(1, pi/2)
     budha.rotate(2, pi/2)
-    budha.squeeze(0, 50, 250)
-    budha.squeeze(1, 20, 180)
-    budha.squeeze(2, -50, 50)
+    budha.squeeze(0, 114, 182)
+    budha.squeeze(1, 112, 164)
+    budha.squeeze(2, -26, 20)
     budha.slice(2, 0)
 
     budha.setup(interval = 0.5)
 
-    line_on_object(c, budha, 1, pi/6, pen1)
+    line_on_object(c, budha, 0.2, pi/9, pen1)
 
     c.show_bitmap(50)
-    #ai = AxidrawInterface(c)
+    ai = AxidrawInterface(c)
 
 if __name__ == "__main__":
     main()
