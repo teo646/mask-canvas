@@ -49,11 +49,8 @@ class Polyline():
                                    [sin(angle), cos(angle), 0, 0],
                                    [0, 0, 1, 0],
                                    [0, 0, 0, 1]])
-        center = deepcopy(self.center)
-        self.move(-center.coordinate[0], -center.coordinate[1])
         for point in self.path:
             point.coordinate = np.matmul(rotate_mat,point.coordinate)
-        self.move(center.coordinate[0], center.coordinate[1])
 
     def scale(self, ratio):
         scale_mat = np.identity(4)
@@ -64,13 +61,9 @@ class Polyline():
             point.coordinate = np.matmul(scale_mat,point.coordinate)
         self.move(center.coordinate[0], center.coordinate[1])
 
-    def move(self, dx, dy):
+    def move(self, axis, delta):
         for point in self.path:
-            point.coordinate[0] += dx
-            point.coordinate[1] += dy
-
-        self.center.coordinate[0] += dx
-        self.center.coordinate[1] += dy
+            point.coordinate[axis] += delta
 
     def move_center(self, point):
         dx = point.coordinate[0]-self.center.coordinate[0]

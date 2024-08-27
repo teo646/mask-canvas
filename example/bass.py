@@ -17,17 +17,18 @@ def main():
     y_from = 12
     y_to = 12+40/cos(pi/10)*6/5.5
 
-    head = ObjFile("./obj/Buda_head_OBJ.obj")
+    head = ObjFile("./obj/bass.obj")
 
-    head.rotate(1, pi/2)
-    head.rotate(2, pi/2)
+    #head.rotate(1, pi/2)
+    head.rotate(2, pi)
     head.squeeze(0, x_from, x_to)
     head.squeeze(1, y_from, y_to)
-    head.squeeze(2, -30, 30)
-    head.slice(2, 0)
+    head.squeeze(2, 0, 20)
+    #head.slice(2, 0)
     #head.show()
 
-    grid_head = GridifiedObj(head, 0.3)
+    grid_head = GridifiedObj(head, 1)
+    #grid_head.show()
     polylines = []
     for x in np.arange(x_from, x_to, 0.3):
         polylines.append(Polyline([Point(x, y_from), Point(x, y_to)], pen1))
@@ -35,9 +36,9 @@ def main():
     polylines1 = put_polylines_on_object(polylines, grid_head, mask=True)
 
     
-    offset =0 
+    offset =-4 
     head.move(1, offset)
-    head.squeeze(2, 0, 25)
+    head.squeeze(2, 0, 13)
     grid_head = GridifiedObj(head, 0.3)
     polylines = []
     for y in np.arange(y_from+offset, y_to+offset, 0.5):
@@ -46,12 +47,12 @@ def main():
     polylines = put_polylines_on_object(polylines, grid_head, mask=True)
 
     for i, polyline in enumerate(polylines):
-        polyline.rotate(0, -pi/6)
+        polyline.rotate(0, pi/6)
         polyline.rotate(1, -pi/10)
         c.draw_polyline(polyline)
 
     for i, polyline in enumerate(polylines1):
-        polyline.rotate(0, -pi/6)
+        polyline.rotate(0, pi/6)
         polyline.rotate(1, -pi/10)
         c.draw_polyline(polyline)
     

@@ -83,6 +83,7 @@ class Canvas:
         image = np.tile(self.paper_color, (self.y*magnification, self.x*magnification, 1)).astype('uint8')
         for polyline in self.polylines:
             image = polyline.draw_bitmap(image, magnification)
+        #image = np.flip(image, 0)
         show_image(image)
 
         save_image = input("do you want to save the image?")

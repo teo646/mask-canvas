@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 class Pen:
     def __init__(self, color, thickness):
@@ -7,7 +8,7 @@ class Pen:
 
 class Point():
     def __init__(self, x,y,z=0):
-        self.coordinate = np.array([x,y,z,1], dtype='float')
+        self.coordinate = np.array(deepcopy([x,y,z,1]), dtype='float')
 
     def yx_convert(self):
         tmp = self.coordinate[0]

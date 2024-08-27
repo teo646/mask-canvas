@@ -5,14 +5,14 @@ def find_nearest_polyline(point, polylines):
 
     for polyline in polylines:
         distance = get_squared_distance(polyline.path[0], point)
-        if(distance == 0):
+        if(distance < 10):
             return polyline
         if(min_distance > distance):
             nearest_polyline = polyline
             min_distance = distance
 
         distance = get_squared_distance(polyline.path[-1], point)
-        if(distance == 0):
+        if(distance < 10):
             polyline.path.reverse()
             return polyline
         if(min_distance > distance):

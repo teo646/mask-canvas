@@ -17,10 +17,10 @@ def main():
     y_from = 27
     y_to = 269
 
-    head = ObjFile("./obj/sitting_budha_scanned.obj")
+    head = ObjFile("./obj/Buda_head_OBJ.obj")
     
+    head.rotate(1, pi/2)
     head.rotate(2, pi/2)
-    head.rotate(1, -pi/8)
     head.rotate(0, -pi/6)
     head.rotate(1, -pi/10)
 
