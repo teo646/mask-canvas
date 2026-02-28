@@ -11,17 +11,22 @@ class AxidrawController:
     def __init__(self, digital_image):
         ad = axidraw.AxiDraw() # Initialize class
         ad.interactive()            # Enter interactive mode
-        connected = ad.connect()    # Open serial port to AxiDraw
+        for i in range(10):
+            connected = ad.connect()    # Open serial port to AxiDraw
+            if connected:
+                self.ad = ad
+                break
+
         ad.options.units = 2
         ad.options.model = 2
-        ad.options.speed_pendown = 30
-        ad.options.speed_penup = 30
-        #ad.options.pen_rate_lower = 90
-        #ad.options.pen_rate_raise = 90
+        ad.options.speed_pendown = 10
+        ad.options.speed_penup = 10
+        ad.options.pen_rate_lower = 30
+        ad.options.pen_rate_raise = 90
         ad.update()
 
-        #ad.options.pen_pos_up = 70
-        #ad.options.pen_pos_down = 50
+        ad.options.pen_pos_up = 80
+        ad.options.pen_pos_down = 10
         self.paused = False
         self.terminated = False
         self.digital_image = digital_image
@@ -31,18 +36,17 @@ class AxidrawController:
         #1,2, or 3. 
         self.polylines_priority = [[],[],[]]
 
-        if connected:
-            self.ad = ad
-        else:
-            exit(0)
 
     def register_polylines(self, polylines, priority=2):
         self.polylines_priority[priority]+=polylines
         
     def _draw_first_polyline(self):
+        num_polylines = len(self.polylines_priority[0]) +\
+        len(self.polylines_priority[1]) + len(self.polylines_priority[2])
         for polylines in self.polylines_priority:
             #if polylines is not empty
             if(polylines):
+                print("polylines left to draw: " + str(num_polylines))
                 self._draw_polyline(polylines[0])
                 del polylines[0]
                 return

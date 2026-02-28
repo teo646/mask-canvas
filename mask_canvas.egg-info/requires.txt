@@ -1,2 +1,6 @@
 numpy
 opencv-python
+scipy
+aioconsole
+perlin_noise
+matplotlib

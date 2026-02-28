@@ -7,7 +7,7 @@ setup(
     author='Tae Young Choi',
     author_email='tyul0529@naver.com',
     packages=['maskCanvas'],
-    install_requires=['numpy', 'opencv-python'],
+    install_requires=['numpy', 'opencv-python', 'scipy', 'aioconsole', 'perlin_noise', 'matplotlib', 'scipy', 'aioconsole', 'perlin_noise', 'pyaxidraw @ https://cdn.evilmadscientist.com/dl/ad/public/AxiDraw_API.zip'],
     license='MIT',
     classifiers=(
         'Development Status :: 3 - Alpha',
@@ -15,7 +15,7 @@ setup(
         'Natural Language :: English',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: Implementation :: CPython',
     ),
 )

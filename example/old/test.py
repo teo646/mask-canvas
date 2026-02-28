@@ -1,18 +1,13 @@
-from maskCanvas import Canvas, Polyline, Mask, Point, Circle, Graph, Regular_polygone
-from maskCanvas import Pen, draw_linear_background
-from math import cos, sin, pi
+from maskCanvas import AxidrawInterface
+import dill
+
 def main():
-    #size of a3
-    c= Canvas(420,297,5,frame=False, paper_color= (25,15,14))
 
-    pen = Pen((200,200,200),0.3)
-
-    c = draw_linear_background(c, pen, 100, 50)
+    with open('./canvas/falling_man.pkl', 'rb') as file:
+        c = dill.load(file)
 
     c.show_bitmap(50)
-
-
-
+    ai = AxidrawInterface(c)
 
 if __name__ == "__main__":
     main()

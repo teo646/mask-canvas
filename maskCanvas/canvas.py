@@ -1,4 +1,6 @@
 import numpy as np
+import dill
+import os
 import cv2
 from .components import Point, Pen
 from .polyline import Polyline
@@ -7,6 +9,7 @@ from .region import Region
 from .util import is_valid_mask, identical_points, show_image
 import math
 import random
+from copy import deepcopy
 
 class Canvas:
     def __init__(self, x, y, offset, frame=True, frame_pen = Pen((0,0,0), 1), paper_color=(0,0,0)):
@@ -38,6 +41,42 @@ class Canvas:
                     current_point = line[1]
         if(not len(current_path) == 1):
             self.polylines.append(Polyline(current_path, polyline.pen, fill=polyline.fill))   
+
+    def get_clicked_path(self, magnification, pen = Pen((0,0,0), 1)):
+        path = []
+
+        def refresh_image():
+            path_polyline = Polyline(path, pen)
+            image_with_path = path_polyline.draw_bitmap(deepcopy(image), magnification)
+            cv2.imshow("image", image_with_path)
+
+        def mouse_event(event, x, y, flags, param):
+            if event == cv2.EVENT_FLAG_LBUTTON:    
+                path.append(Point(x/magnification, y/magnification))
+                refresh_image()
+
+        image = np.tile(self.paper_color, (self.y*magnification, self.x*magnification, 1)).astype('uint8')
+        for polyline in self.polylines:
+            image = polyline.draw_bitmap(image, magnification)
+        #image = np.flip(image, 0)
+        cv2.namedWindow("image", cv2.WINDOW_NORMAL)
+        cv2.setWindowProperty("image", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.imshow("image", image)
+        cv2.setMouseCallback("image", mouse_event, image)
+        while True: 
+            key_code = cv2.waitKey()
+            if key_code == ord('q') or key_code == 27: # q를 누르면 종료
+                cv2.destroyAllWindows()
+                return path
+            elif key_code == ord('d'):
+                path = path[:-1]
+                refresh_image()
+
+    def erase_polyline(self, number):
+        if(len(self.polylines) < number):
+            self.polylines = []
+        else:
+            self.polylines = self.polylines[:-number]
 
     def _mask_segment(self, point1, point2):
         if(not identical_points(point1, point2)):
@@ -86,7 +125,16 @@ class Canvas:
         #image = np.flip(image, 0)
         show_image(image)
 
-        save_image = input("do you want to save the image?")
-        if(save_image == 'y'):
-            file_name=input("enter file name: ")
-            cv2.imwrite('images/'+file_name+'.jpg', image)
+    def save_image(self, magnification):
+        image = np.tile(self.paper_color, (self.y*magnification, self.x*magnification, 1)).astype('uint8')
+        for polyline in self.polylines:
+            image = polyline.draw_bitmap(image, magnification)
+
+        file_name=input("enter file name: ")
+        cv2.imwrite(file_name, image)
+
+
+    def save(self):
+        save_path = os.path.join(input("path to save the canvas:"))
+        with open(save_path, 'wb') as file: 
+            dill.dump(self, file) 

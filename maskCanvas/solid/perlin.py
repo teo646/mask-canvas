@@ -31,14 +31,13 @@ def noise_polyline(polyline, scale=0.1, amplitude=2):
     return noise_polylines([polyline], scale, amplitude)[0]
 '''
 class Perlin(Object):
-    def __init__(self, amplitude=1):
+    def __init__(self, scale=1, amplitude=1):
         self.perlin_noise = PerlinNoise(seed=1)
         self.amplitude = amplitude
+        self.scale = scale
 
-    def get_z(self, point):
-        x = point.coordinate[0]
-        y = point.coordinate[1]
-        return self.perlin_noise([x*self.amplitude, y*self.amplitude])
+    def get_z(self, x, y):
+        return self.scale*self.perlin_noise([x*self.amplitude, y*self.amplitude])
 
     def scale(self, amplitude):
         self.amplitude = self.amplitude*amplitude

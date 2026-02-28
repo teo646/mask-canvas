@@ -78,7 +78,7 @@ def main():
     pen1 = Pen((0,0,0),0.2)
     pen2 = Pen((0,0,255),0.2)
 
-    man = ObjFile("./obj/test.obj")
+    man = ObjFile("./obj/falling_man.obj")
     man.edit()
     grid_man = GridifiedObj(man, grid_interval)
     grid_man.show()
@@ -92,15 +92,15 @@ def main():
         #polyline.rotate(1, -pi/10)
         c.draw_polyline(polyline)
 
-    outline_points = [polyline.path[index] for polyline in polylines for index in [0, -1]]
-    arranged_points = alpha_shape(outline_points, 2)
-    c.draw_polyline(Polyline(arranged_points, pen2))
+    #outline_points = [polyline.path[index] for polyline in polylines for index in [0, -1]]
+    #arranged_points = alpha_shape(outline_points, 2)
+    #c.draw_polyline(Polyline(arranged_points, pen2))
     #c.register_mask(Mask(arranged_points))
 
     c.draw_polyline(Polyline([Point(0,0), Point(200,200)], pen1))
 
     c.show_bitmap(50)
-    #ai = AxidrawInterface(c)
+    ai = AxidrawInterface(c)
 
 if __name__ == "__main__":
     main()

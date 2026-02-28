@@ -5,7 +5,7 @@ import numpy as np
 from copy import deepcopy
 from tqdm import tqdm
 
-def put_polylines_on_object(polylines, obj, mask=False):
+def put_polylines_on_object(polylines, obj):
     polylines_on_object = []
     for polyline in polylines:
         polylines_on_object += put_polyline_on_object(polyline, obj)
@@ -18,7 +18,7 @@ def put_polyline_on_object(polyline, obj):
     for p1, p2 in zip(polyline.path, polyline.path[1:]):
         vector = p2.coordinate[:2] - p1.coordinate[:2]
         normal_vector = vector/np.linalg.norm(vector)
-        for length in np.arange(0, np.linalg.norm(vector), 0.3):
+        for length in np.arange(0, np.linalg.norm(vector), 0.05):
             coordinate = p1.coordinate[:2] + normal_vector*length
             z = obj.get_z(coordinate[0], coordinate[1])
             if(z):

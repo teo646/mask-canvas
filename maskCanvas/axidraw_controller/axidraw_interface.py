@@ -4,6 +4,8 @@ from .axidraw_controller import AxidrawController
 from .digital_image import DigitalImage
 import asyncio
 import aioconsole
+import nest_asyncio
+nest_asyncio.apply()
 
 
 
@@ -118,22 +120,26 @@ class AxidrawInterface:
                 print("unkown command '",command,"'")
                 print(command_info)
 
-    def __init__(self, canvas):
+    def __init__(self, canvas, reorder_polyline = True):
         #canvas is drawing that you will draw.
         self.canvas = canvas
         digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
         self.axidraw_controller = AxidrawController(digital_image)
 
         print("arranging lines ...")
-        self.polylines = plan_polylines(self.canvas.polylines)
+        self.polylines = plan_polylines(self.canvas.polylines, reorder_polyline)
         print("arranging lines done")
+
         asyncio.run(self._process())
 
 
     async def _process(self):
-        async with asyncio.TaskGroup() as tg:
-            axidraw = tg.create_task(self.axidraw_controller.process())
-            interface = tg.create_task(self._interact())
+        loop = asyncio.get_event_loop()
+        axidraw = asyncio.create_task(self.axidraw_controller.process())
+        interface = asyncio.create_task(self._interact())
+        
+        await(axidraw)
+        await(interface)
 
 
 

@@ -70,6 +70,7 @@ class Polyline():
         dy = point.coordinate[1]-self.center.coordinate[1]
         self.move(dx, dy)
 
+
 class Rectangle(Polyline):
     def _get_center(self):
         return Point(0,0,0)
@@ -154,3 +155,4 @@ class Arc(Graph):
         y_func=lambda t: radius*sin(t)
         super().__init__(x_func, y_func, pen, t_range=t_range, precision=precision,fill=fill)
 
+    

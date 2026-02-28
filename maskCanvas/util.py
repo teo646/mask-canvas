@@ -110,3 +110,78 @@ def get_outline(points):
 
 def get_distance(p1, p2):
     return np.linalg.norm(p1.coordinate[:2]-p2.coordinate[:2])
+
+class KeyWrapper:
+    def __init__(self, iterable, key):
+        self.it = iterable
+        self.key = key
+
+    def __getitem__(self, i):
+        return self.key(self.it[i])
+
+    def __len__(self):
+        return len(self.it)
+
+    def insert(self, index, item):
+        print('asked to insert %s at index%d' % (item, index))
+        self.it.insert(index, {"time":item})
+
+
+def alpha_shape(points, alpha, only_outer=True):
+    """
+    Compute the alpha shape (concave hull) of a set of points.
+    :param points: np.array of shape (n,2) points.
+    :param alpha: alpha value.
+    :param only_outer: boolean value to specify if we keep only the outer border
+    or also inner edges.
+    :return: set of (i,j) pairs representing edges of the alpha-shape. (i,j) are
+    the indices in the points array.
+    """
+    assert len(points) > 3, "Need at least four points"
+    tri = Delaunay([point.coordinate[:2] for point in points])
+    def add_edge(edges, i, j):
+        """
+        Add an edge between the i-th and j-th points,
+        if not in the list already
+        """
+        if (i, j) in edges or (j, i) in edges:
+            # already added
+            assert (j, i) in edges, "Can't go twice over same directed edge right?"
+            if only_outer:
+                # if both neighboring triangles are in shape, it's not a boundary edge
+                edges.remove((j, i))
+            return
+        edges.add((i, j))
+    edges = set()
+    # Loop over triangles:
+    # ia, ib, ic = indices of corner points of the triangle
+    for ia, ib, ic in tri.simplices:
+        pa = points[ia]
+        pb = points[ib]
+        pc = points[ic]
+        # Computing radius of triangle circumcircle
+        # www.mathalino.com/reviewer/derivation-of-formulas/derivation-of-formula-for-radius-of-circumcircle
+        a = np.linalg.norm(pa.coordinate[:2] - pb.coordinate[:2])
+        b = np.linalg.norm(pb.coordinate[:2] - pc.coordinate[:2])
+        c = np.linalg.norm(pc.coordinate[:2] - pa.coordinate[:2])
+        s = (a + b + c) / 2.0
+        area = np.sqrt(s * (s - a) * (s - b) * (s - c))
+        circum_r = a * b * c / (4.0 * area)
+        if circum_r < alpha:
+            add_edge(edges, pa, pb)
+            add_edge(edges, pb, pc)
+            add_edge(edges, pc, pa)
+
+    edges_dict = {}
+    for edge in edges:
+        edges_dict[edge[0]] = edge[1]
+    edges_path = [list(edges)[0][0]]
+    while len(edges_path) < len(edges_dict):
+        edges_path.append(edges_dict[edges_path[-1]])
+        # if empty
+        if(not edges_dict):
+            break
+
+    return edges_path
+
+

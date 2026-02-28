@@ -2,7 +2,7 @@ import numpy as np
 from copy import deepcopy
 from bisect import bisect_left, insort
 from .util import identical_points, get_y_intercept_function,\
-        get_lines_intersection
+        get_lines_intersection, KeyWrapper
 from .region import Region
 from .components import Point
 
@@ -43,10 +43,12 @@ class Mask:
             vertex2_sign = get_y_intercept(self.path[index]) - intercept
             #basic intersecting case
             if(vertex1_sign*vertex2_sign < 0):
-                intersection = get_lines_intersection(self.path[index-1], self.path[index], point1, point2)
+                intersection = get_lines_intersection(self.path[index-1],\
+                self.path[index], point1, point2)
                 intersections.append(intersection)
             #case where a vertex lies on the line
-            elif(vertex1_sign == 0 and (get_y_intercept(self.path[index-2])-intercept)*vertex2_sign < 0):
+            elif(vertex1_sign == 0 and\
+            (get_y_intercept(self.path[index-2])-intercept)*vertex2_sign < 0):
                 intersections.append(self.path[index-1])
             vertex1_sign = vertex2_sign
 
@@ -80,8 +82,10 @@ class Mask:
         intersections = self._get_intersections(point1, point2)
         intersections += [point1, point2]
         intersections = sorted(intersections, key= lambda point: point.coordinate[0])
-        point1_index = bisect_left(intersections, point1.coordinate[0], key=lambda c: c.coordinate[0])
-        point2_index = bisect_left(intersections, point2.coordinate[0], key=lambda c: c.coordinate[0])
+        point1_index = bisect_left(KeyWrapper(intersections, lambda c: c.coordinate[0]),\
+        point1.coordinate[0])
+        point2_index = bisect_left(KeyWrapper(intersections, lambda c: c.coordinate[0]),\
+        point2.coordinate[0])
         if(point1_index>point2_index):
             intersections.reverse()
             point1_index = len(intersections)-point1_index-1

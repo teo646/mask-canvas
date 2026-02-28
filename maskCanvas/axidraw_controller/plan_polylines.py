@@ -40,20 +40,28 @@ def arrange_polylines(polylines):
 
     return arranged_polylines
 
+def find_key(pen1, pens):
+    for pen2 in pens:
+        if(pen1.color == pen2.color and pen1.thickness == pen2.thickness):
+            return pen2
+    return None
+
 def classify_polylines_by_pen(polylines):
     classified_polylines = {}
     for polyline in polylines:
-        if(polyline.pen in classified_polylines.keys()):
-            classified_polylines[polyline.pen].append(polyline)
+        key = find_key(polyline.pen, classified_polylines.keys())
+        if(key):
+            classified_polylines[key].append(polyline)
         else:
             classified_polylines[polyline.pen] = [polyline]
     return classified_polylines
 
-def plan_polylines(polylines):
+def plan_polylines(polylines, reorder = True):
     classified_polylines = classify_polylines_by_pen(polylines)
 
-    for pen in classified_polylines:
-        classified_polylines[pen] = arrange_polylines(classified_polylines[pen])
+    if(reorder):
+        for pen in classified_polylines:
+            classified_polylines[pen] = arrange_polylines(classified_polylines[pen])
 
     return classified_polylines
 
