@@ -15,7 +15,15 @@ class Polyline():
         return Point(x_mean, y_mean, z_mean)
 
     def __init__(self, path, pen, fill=False):
-        self.path = path
+        self.path = []
+        for point in path:
+            if(not isinstance(point, Point)):
+                if(len(point) > 2):
+                    point = Point(point[0], point[1], point[2])
+                else:
+                    point = Point(point[0], point[1])
+            self.path.append(point)
+
         self.pen = pen
         self.center = self._get_center()
         self.fill=fill
@@ -55,11 +63,8 @@ class Polyline():
     def scale(self, ratio):
         scale_mat = np.identity(4)
         scale_mat[:3] *= ratio
-        center = deepcopy(self.center)
-        self.move(-center.coordinate[0], -center.coordinate[1])
         for point in self.path:
             point.coordinate = np.matmul(scale_mat,point.coordinate)
-        self.move(center.coordinate[0], center.coordinate[1])
 
     def move(self, axis, delta):
         for point in self.path:

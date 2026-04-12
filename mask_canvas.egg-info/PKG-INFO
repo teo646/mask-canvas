@@ -19,6 +19,9 @@ Requires-Dist: scipy
 Requires-Dist: aioconsole
 Requires-Dist: perlin_noise
 Requires-Dist: matplotlib
+Requires-Dist: scipy
+Requires-Dist: aioconsole
+Requires-Dist: perlin_noise
 Dynamic: author
 Dynamic: author-email
 Dynamic: classifier

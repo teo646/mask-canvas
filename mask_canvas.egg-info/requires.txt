@@ -4,3 +4,6 @@ scipy
 aioconsole
 perlin_noise
 matplotlib
+scipy
+aioconsole
+perlin_noise

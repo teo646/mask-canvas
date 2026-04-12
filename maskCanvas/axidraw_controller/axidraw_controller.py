@@ -19,14 +19,14 @@ class AxidrawController:
 
         ad.options.units = 2
         ad.options.model = 2
-        ad.options.speed_pendown = 10
-        ad.options.speed_penup = 10
-        ad.options.pen_rate_lower = 30
-        ad.options.pen_rate_raise = 90
-        ad.update()
+        ad.options.speed_pendown = 4
+        ad.options.speed_penup = 30
+        ad.options.pen_rate_lower = 80
+        ad.options.pen_rate_raise = 80
 
-        ad.options.pen_pos_up = 80
-        ad.options.pen_pos_down = 10
+        #ad.options.pen_pos_up = 80
+        #ad.options.pen_pos_down = 10
+        ad.update()
         self.paused = False
         self.terminated = False
         self.digital_image = digital_image
