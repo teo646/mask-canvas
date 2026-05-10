@@ -19,7 +19,7 @@ class AxidrawController:
 
         ad.options.units = 2
         ad.options.model = 2
-        ad.options.speed_pendown = 4
+        ad.options.speed_pendown = 10
         ad.options.speed_penup = 30
         ad.options.pen_rate_lower = 80
         ad.options.pen_rate_raise = 80

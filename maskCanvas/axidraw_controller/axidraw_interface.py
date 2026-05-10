@@ -120,14 +120,14 @@ class AxidrawInterface:
                 print("unkown command '",command,"'")
                 print(command_info)
 
-    def __init__(self, canvas, reorder_polyline = True):
+    def __init__(self, canvas, random_draw = False, reorder_polyline = True):
         #canvas is drawing that you will draw.
         self.canvas = canvas
         digital_image = DigitalImage(self.canvas.paper_color, self.canvas.x, self.canvas.y)
         self.axidraw_controller = AxidrawController(digital_image)
 
         print("arranging lines ...")
-        self.polylines = plan_polylines(self.canvas.polylines, reorder_polyline)
+        self.polylines = plan_polylines(self.canvas.polylines, random_draw, reorder_polyline)
         print("arranging lines done")
 
         asyncio.run(self._process())

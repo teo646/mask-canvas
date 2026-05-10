@@ -1,4 +1,9 @@
 from maskCanvas import Point
+import random
+
+random.seed(42)
+
+
 def find_nearest_polyline(point, polylines):
     nearest_polyline = polylines[0]
     min_distance = get_squared_distance(nearest_polyline.path[0], point)
@@ -56,8 +61,12 @@ def classify_polylines_by_pen(polylines):
             classified_polylines[polyline.pen] = [polyline]
     return classified_polylines
 
-def plan_polylines(polylines, reorder = True):
+def plan_polylines(polylines, randomize = False, reorder = True):
     classified_polylines = classify_polylines_by_pen(polylines)
+
+    if(randomize):
+        for pen in classified_polylines:
+            classified_polylines[pen] = random.sample(classified_polylines[pen], len(classified_polylines[pen]))
 
     if(reorder):
         for pen in classified_polylines:
